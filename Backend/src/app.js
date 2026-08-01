@@ -1,6 +1,11 @@
 const express = require("express")
 const cookieParser = require("cookie-parser")
 const cors = require("cors")
+const dns = require("dns")
+dns.setServers([
+    '1.1.1.1',
+    '8.8.8.8'
+])
 
 const app = express();
 

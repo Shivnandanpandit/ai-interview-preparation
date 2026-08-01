@@ -35,24 +35,80 @@ const interviewReportSchema = z.object({
 
 async function generateInterviewReport({resume, selfDescription, jobDescription}){
 
-    const prompt = `Generate a comprehensive interview preparation report based on the following inputs:
-                        Resume: ${resume}
-                        Self Description: ${selfDescription}
-                        Job Description: ${jobDescription}
-                    `
+                   
+
+    const prompt = `
+You are an interview preparation assistant.
+
+Analyze the following information.
+
+Resume:
+${resume}
+
+Self Description:
+${selfDescription}
+
+Job Description:
+${jobDescription}
+
+Return ONLY a valid JSON object.
+
+Do not write explanations.
+Do not write markdown.
+Do not wrap the JSON in triple backticks.
+
+The JSON MUST contain exactly these fields:
+
+{
+  "title": "Job title",
+  "matchScore": number,
+  "technicalQuestions": [
+    {
+      "question": "",
+      "intention": "",
+      "answer": ""
+    }
+  ],
+  "behavioralQuestions": [
+    {
+      "question": "",
+      "intention": "",
+      "answer": ""
+    }
+  ],
+  "skillGaps": [
+    {
+      "skill": "",
+      "severity": "low"
+    }
+  ],
+  "preparationPlan": [
+    {
+      "day": 1,
+      "focus": "",
+      "tasks": [""]
+    }
+  ]
+}
+`;
 
     const response = await ai.models.generateContent({
-        model: "gemini-3.5-flash",
+        model: "gemini-2.5-flash",
         contents:prompt,
         config:{
-            responseMimeType: "application/json",
-            responseSchema: zodToJsonSchema(interviewReportSchema),
+            
+            responseMimeType: "application/json"
 
         }
     })
 
+  
 
-    return JSON.parse(response.text)
+    const json = JSON.parse(response.text);
+
+    const validated = interviewReportSchema.parse(json);
+
+    return validated;
 
 
 }
@@ -90,7 +146,7 @@ async function generateResumePdf({resume, selfDescription, jobDescription}){
                     `
 
     const response = await ai.models.generateContent({
-        model: "gemini-3.5-flash",
+        model: "gemini-2.5-flash",
         contents:prompt,
         config:{
             responseMimeType: "application/json",

@@ -4,7 +4,7 @@ const mongoose = require('mongoose')
 const technicalQuestionSchema = new mongoose.Schema({
     question: {
         type : String,
-        required: [true, "Technicla question is required"]
+        required: [true, "Technical question is required"]
     },
     intention: {
         type: String,
